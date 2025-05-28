@@ -8,7 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joaquin.uala.R
 
 @Composable
 fun BackFloatingButton(
@@ -21,7 +23,7 @@ fun BackFloatingButton(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-            contentDescription = "Volver",
+            contentDescription = stringResource(R.string.go_back),
             tint = Color.Gray,
             modifier = Modifier.size(54.dp)
         )

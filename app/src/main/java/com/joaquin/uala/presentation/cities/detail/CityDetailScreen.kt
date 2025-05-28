@@ -21,9 +21,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.joaquin.uala.R
 import com.joaquin.uala.presentation.cities.components.BackFloatingButton
 import com.joaquin.uala.presentation.cities.list.CitiesViewModel
 import com.joaquin.uala.ui.theme.Primary
@@ -47,7 +49,7 @@ fun CityDetailScreen(
 
                 Icon(
                     imageVector = Icons.Filled.Favorite,
-                    contentDescription = "Favorito",
+                    contentDescription = stringResource(R.string.favorite),
                     tint = if (it.isFavorite) Primary else Color.LightGray,
                     modifier = Modifier.size(32.dp)
                 )
@@ -68,8 +70,15 @@ fun CityDetailScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Text("Latitude: ${it.lat}", style = MaterialTheme.typography.bodyMedium)
-                Text("Longitude: ${it.lon}", style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = "${stringResource(R.string.latitude)}: ${it.lat}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Text(
+                    text = "${stringResource(R.string.longitude)}: ${it.lon}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
@@ -77,7 +86,14 @@ fun CityDetailScreen(
                     onClick = { viewModel.toggleFavorite(it) },
                     colors = ButtonDefaults.buttonColors(containerColor = Primary)
                 ) {
-                    Text(if (it.isFavorite) "Quitar de favoritos" else "Agregar a favoritos")
+                    Text(
+                        text = stringResource(
+                            if (it.isFavorite)
+                                R.string.remove_favorite
+                            else
+                                R.string.add_favorite
+                        )
+                    )
                 }
             }
         } ?: run {
@@ -88,7 +104,7 @@ fun CityDetailScreen(
 
         BackFloatingButton(
             onBack = { navController.popBackStack() },
-            modifier = Modifier.padding( 8.dp)
+            modifier = Modifier.padding(8.dp)
         )
     }
 }

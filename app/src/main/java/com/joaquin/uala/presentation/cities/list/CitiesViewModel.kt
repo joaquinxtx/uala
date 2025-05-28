@@ -103,19 +103,22 @@ class CitiesViewModel @Inject constructor(
 
     fun toggleFavorite(city: CityModel) {
         viewModelScope.launch {
-            useCases.toggleFavorite(city.copy(isFavorite = !city.isFavorite))
+            val updatedCity = city.copy(isFavorite = !city.isFavorite)
+            useCases.toggleFavorite(updatedCity)
 
             allCities = allCities.map {
-                if (it.id == city.id) it.copy(isFavorite = !city.isFavorite) else it
+                if (it.id == city.id) updatedCity else it
             }
+
+            _selectedCity.value = updatedCity
 
             visibleCities.clear()
             currentPage = 0
             loadNextPage()
-
-            _selectedCity.value = city.copy(isFavorite = !city.isFavorite)
         }
     }
+
+
 
 
     fun searchCities(query: String, onlyFavorites: Boolean) {

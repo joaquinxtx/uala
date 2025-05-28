@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joaquin.uala.R
 
 @Composable
 fun SearchHeaderBar(
@@ -27,8 +29,11 @@ fun SearchHeaderBar(
     onClick: () -> Unit,
     onClear: (() -> Unit)? = null,
     modifier: Modifier = Modifier
-
 ) {
+    val placeholder = stringResource(R.string.search_city_placeholder)
+    val searchDesc = stringResource(R.string.search_city_placeholder)
+    val clearDesc = stringResource(R.string.clear_search)
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -47,14 +52,14 @@ fun SearchHeaderBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Buscar",
+                contentDescription = searchDesc,
                 tint = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = queryText.ifEmpty { "Buscar ciudad..." },
+                text = queryText.ifEmpty { placeholder },
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
@@ -64,7 +69,7 @@ fun SearchHeaderBar(
                 IconButton(onClick = it) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Borrar selección",
+                        contentDescription = clearDesc,
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }

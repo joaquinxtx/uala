@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">uala</string>
+    <string name="tab_all">All</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="close_search">Close search</string>
+    <string name="favorite">Favorite</string>
+    <string name="remove_favorite">Remove from favorites</string>
+    <string name="add_favorite">Add to favorites</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="search_city_placeholder">Search city</string>
+    <string name="clear_search">Clear search</string>
+    <string name="search_no_results">No cities found</string>
+    <string name="search_no_favorites">No favorites found</string>
+    <string name="empty_all_cities">No cities available</string>
+    <string name="empty_favorites">No favorite cities</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="view_detail">View detail</string>
+    <string name="go_back">Go back</string>
 </resources>
