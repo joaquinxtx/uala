@@ -84,6 +84,8 @@ dependencies {
     // Unit testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+
     // Mocking
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)

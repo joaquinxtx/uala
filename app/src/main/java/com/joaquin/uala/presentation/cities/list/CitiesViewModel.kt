@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joaquin.uala.domain.model.CityModel
 import com.joaquin.uala.domain.useCases.CityUseCases
+import com.joaquin.uala.utils.NetworkConnectivityObserver
 import com.joaquin.uala.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CitiesViewModel @Inject constructor(
-    private val useCases: CityUseCases
+    private val useCases: CityUseCases,
+    private val connectivityObserver: NetworkConnectivityObserver
+
 ) : ViewModel() {
 
     private val _citiesState = MutableStateFlow<Resource<List<CityModel>>>(Resource.Loading)
@@ -32,6 +35,9 @@ class CitiesViewModel @Inject constructor(
     private val _selectedCity = MutableStateFlow<CityModel?>(null)
     val selectedCity: StateFlow<CityModel?> = _selectedCity
 
+    private val _selectedTabIndex = MutableStateFlow(0)
+    val selectedTabIndex: StateFlow<Int> = _selectedTabIndex
+
     private var allCities: List<CityModel> = emptyList()
     private val visibleCities = mutableListOf<CityModel>()
     private var currentPage = 0
@@ -40,6 +46,19 @@ class CitiesViewModel @Inject constructor(
     init {
         observeCitiesWithFavorites()
         observeFavorites()
+        observeConnectivity()
+
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            connectivityObserver.networkState.collectLatest { isConnected ->
+                val shouldReload = _citiesState.value is Resource.Error || allCities.isEmpty()
+                if (isConnected && shouldReload) {
+                    observeCitiesWithFavorites()
+                }
+            }
+        }
     }
 
     private fun observeFavorites() {
@@ -48,6 +67,9 @@ class CitiesViewModel @Inject constructor(
                 _favoriteCitiesState.value = it
             }
         }
+    }
+    fun updateSelectedTab(index: Int) {
+        _selectedTabIndex.value = index
     }
 
     private fun observeCitiesWithFavorites() {
