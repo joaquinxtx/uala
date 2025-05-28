@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">uala</string>
+    <string name="tab_all">Todos</string>
+    <string name="tab_favorites">Favoritos</string>
+    <string name="close_search">Cerrar búsqueda</string>
+    <string name="favorite">Favorito</string>
+    <string name="remove_favorite">Quitar de favoritos</string>
+    <string name="add_favorite">Agregar a favoritos</string>
+    <string name="latitude">Latitud</string>
+    <string name="longitude">Longitud</string>
+    <string name="search_city_placeholder">Buscar ciudad</string>
+    <string name="clear_search">Limpiar búsqueda</string>
+    <string name="search_no_results">No se encontraron ciudades</string>
+    <string name="search_no_favorites">No se encontraron favoritos</string>
+    <string name="empty_all_cities">No hay ciudades disponibles</string>
+    <string name="empty_favorites">Sin ciudades en favoritos</string>
+    <string name="unknown_error">Error desconocido</string>
+    <string name="view_detail">Ver detalle</string>
+    <string name="go_back">Volver</string>
+</resources>

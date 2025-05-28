@@ -13,6 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.joaquin.uala.R
 import com.joaquin.uala.domain.model.CityModel
 import com.joaquin.uala.presentation.cities.components.EmptyState
 import com.joaquin.uala.utils.Resource
@@ -23,9 +25,11 @@ fun CityListSection(
     onItemClick: (CityModel) -> Unit,
     onToggleFavorite: (CityModel) -> Unit,
     onLoadMore: (() -> Unit)? = null,
-    emptyMessage: String = "No hay elementos",
+    emptyMessage: String = stringResource(R.string.empty_all_cities),
     emptyIcon: ImageVector = Icons.Default.Info
 ) {
+    val defaultErrorMessage = stringResource(id = R.string.unknown_error)
+
     when (resource) {
         is Resource.Loading -> Box(
             modifier = Modifier.fillMaxSize(),
@@ -33,10 +37,12 @@ fun CityListSection(
         ) {
             CircularProgressIndicator()
         }
+
         is Resource.Error -> EmptyState(
-            message = resource.message ?: "Error desconocido",
+            message = resource.message ?: defaultErrorMessage,
             icon = Icons.Default.Refresh
         )
+
         is Resource.Success -> {
             val cities = resource.data
             if (cities.isEmpty()) {

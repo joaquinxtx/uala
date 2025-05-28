@@ -16,14 +16,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joaquin.uala.R
 
 @Composable
 fun SearchBar(
     query: String,
     onQueryChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "Buscar ciudad"
+    placeholder: String = stringResource(R.string.search_city_placeholder)
 ) {
     Surface(
         modifier = modifier
@@ -47,7 +49,7 @@ fun SearchBar(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Buscar",
+                    contentDescription = stringResource(R.string.search_city_placeholder),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             },
@@ -56,7 +58,7 @@ fun SearchBar(
                     IconButton(onClick = { onQueryChanged("") }) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Limpiar búsqueda",
+                            contentDescription = stringResource(R.string.clear_search),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -77,4 +79,5 @@ fun SearchBar(
         )
     }
 }
+
 

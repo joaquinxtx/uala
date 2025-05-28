@@ -26,12 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.joaquin.uala.R
 import com.joaquin.uala.presentation.cities.list.CitiesScreen
 import com.joaquin.uala.presentation.cities.list.CitiesViewModel
 import com.joaquin.uala.presentation.cities.map.components.GoogleMapView
@@ -56,6 +58,11 @@ fun CityMapScreen(
                 LatLng(city.lat, city.lon), 10f
             )
             cameraPositionState.move(position)
+        }
+    }
+    LaunchedEffect(isLandscape) {
+        if (isLandscape) {
+            viewModel.setSearchVisibility(false)
         }
     }
 
@@ -104,7 +111,7 @@ fun CityMapScreen(
                                 .fillMaxWidth(0.5f)
                                 .height(48.dp)
                         ) {
-                            Text("Ver detalle")
+                            Text(stringResource(R.string.view_detail))
                         }
                     }
                 }
@@ -156,14 +163,14 @@ fun CityMapScreen(
                         }
                     },
                     colors = ButtonDefaults.elevatedButtonColors(
-                        containerColor = Color(0xFF0D47A1),
+                        containerColor = Primary,
                         contentColor = Color.White
                     ),
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .height(48.dp)
                 ) {
-                    Text("Ver detalle")
+                    Text(stringResource(R.string.view_detail))
                 }
             }
         }

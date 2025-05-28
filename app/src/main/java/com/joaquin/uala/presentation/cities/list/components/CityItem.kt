@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.joaquin.uala.R
 import com.joaquin.uala.domain.model.CityModel
 
 @Composable
@@ -27,6 +29,8 @@ fun CityItem(
     onToggleFavorite: (CityModel) -> Unit,
     onClick: () -> Unit
 ) {
+    val favoriteDescription = stringResource(id = R.string.favorite)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -52,7 +56,7 @@ fun CityItem(
         IconButton(onClick = { onToggleFavorite(city) }) {
             Icon(
                 imageVector = if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = "Favorito",
+                contentDescription = favoriteDescription,
                 tint = if (city.isFavorite) Color.Red else Color.Gray
             )
         }

@@ -22,8 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.joaquin.uala.R
+import com.joaquin.uala.domain.model.CityModel
 import com.joaquin.uala.presentation.cities.components.BackFloatingButton
 import com.joaquin.uala.presentation.cities.list.components.CityListSection
 import com.joaquin.uala.presentation.cities.list.components.SearchBar
@@ -41,12 +44,13 @@ fun CitiesScreen(
     val citiesState by viewModel.citiesState.collectAsState()
     val favoriteCities by viewModel.favoriteCitiesState.collectAsState()
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsState()
-
     val searchState by viewModel.searchState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
-    val tabs = listOf("Todos", "Favoritos")
-
+    val tabs = listOf(
+        stringResource(R.string.tab_all),
+        stringResource(R.string.tab_favorites)
+    )
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -55,34 +59,33 @@ fun CitiesScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (!isLandscape) {
-                BackFloatingButton(
-                    onBack = { onClose() },
-                )
+                BackFloatingButton(onBack = onClose)
             }
+
             SearchBar(
                 query = searchQuery,
                 onQueryChanged = { query ->
-                    val isOnlyFavorites = selectedTabIndex == 1
-                    viewModel.updateSearchQuery(query, isOnlyFavorites)
+                    viewModel.updateSearchQuery(query, selectedTabIndex == 1)
                 },
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = if (isLandscape) 0.dp else 8.dp)
             )
         }
-        TabRow(selectedTabIndex = selectedTabIndex, indicator = { tabPositions ->
-            SecondaryIndicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                color = Primary
-            )
-        }) {
+
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            indicator = { tabPositions ->
+                SecondaryIndicator(
+                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                    color = Primary
+                )
+            }
+        ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
-                    onClick = {
-                        viewModel.updateSelectedTab(index)
-                        viewModel.updateSearchQuery(searchQuery, index == 1)
-                    },
+                    onClick = { viewModel.updateSelectedTab(index) },
                     text = {
                         Text(
                             title,
@@ -92,41 +95,80 @@ fun CitiesScreen(
                 )
             }
         }
-        when {
-            searchQuery.isNotEmpty() -> {
-                CityListSection(
-                    resource = searchState,
-                    onItemClick = { viewModel.selectCity(it); onClose() },
-                    onToggleFavorite = viewModel::toggleFavorite,
-                    emptyMessage = "No se encontraron ciudades",
-                    emptyIcon = Icons.Default.Edit
-                )
-            }
 
-            selectedTabIndex == 0 -> {
-                CityListSection(
-                    resource = citiesState,
-                    onItemClick = { viewModel.selectCity(it); onClose() },
-                    onToggleFavorite = viewModel::toggleFavorite,
-                    onLoadMore = viewModel::loadNextPage,
-                    emptyMessage = "No hay ciudades disponibles",
-                    emptyIcon = Icons.Default.Refresh
-                )
-            }
-
-            selectedTabIndex == 1 -> {
-                CityListSection(
-                    resource = Resource.Success(favoriteCities),
-                    onItemClick = { viewModel.selectCity(it); onClose() },
-                    onToggleFavorite = viewModel::toggleFavorite,
-                    emptyMessage = "Sin ciudades en favoritos",
-                    emptyIcon = Icons.Default.FavoriteBorder
-                )
-            }
-        }
-
+        CityListContent(
+            selectedTabIndex = selectedTabIndex,
+            searchQuery = searchQuery,
+            searchState = searchState,
+            citiesState = citiesState,
+            favoriteCities = favoriteCities,
+            onItemClick = {
+                viewModel.selectCity(it)
+                onClose()
+            },
+            onToggleFavorite = viewModel::toggleFavorite,
+            onLoadMore = viewModel::loadNextPage
+        )
     }
 }
+
+
+@Composable
+private fun CityListContent(
+    selectedTabIndex: Int,
+    searchQuery: String,
+    searchState: Resource<List<CityModel>>,
+    citiesState: Resource<List<CityModel>>,
+    favoriteCities: List<CityModel>,
+    onItemClick: (CityModel) -> Unit,
+    onToggleFavorite: (CityModel) -> Unit,
+    onLoadMore: (() -> Unit)? = null
+) {
+    when {
+        searchQuery.isNotEmpty() && selectedTabIndex == 0 -> {
+            CityListSection(
+                resource = searchState,
+                onItemClick = onItemClick,
+                onToggleFavorite = onToggleFavorite,
+                emptyMessage = stringResource(R.string.search_no_results),
+                emptyIcon = Icons.Default.Edit
+            )
+        }
+        searchQuery.isNotEmpty() && selectedTabIndex == 1 -> {
+            val filteredFavorites = favoriteCities.filter {
+                it.name.contains(searchQuery, ignoreCase = true)
+            }
+            CityListSection(
+                resource = Resource.Success(filteredFavorites),
+                onItemClick = onItemClick,
+                onToggleFavorite = onToggleFavorite,
+                emptyMessage = stringResource(R.string.search_no_favorites),
+                emptyIcon = Icons.Default.Edit
+            )
+        }
+        selectedTabIndex == 0 -> {
+            CityListSection(
+                resource = citiesState,
+                onItemClick = onItemClick,
+                onToggleFavorite = onToggleFavorite,
+                onLoadMore = onLoadMore,
+                emptyMessage = stringResource(R.string.empty_all_cities),
+                emptyIcon = Icons.Default.Refresh
+            )
+        }
+        selectedTabIndex == 1 -> {
+            CityListSection(
+                resource = Resource.Success(favoriteCities),
+                onItemClick = onItemClick,
+                onToggleFavorite = onToggleFavorite,
+                emptyMessage = stringResource(R.string.empty_favorites),
+                emptyIcon = Icons.Default.FavoriteBorder
+            )
+        }
+    }
+}
+
+
 
 
 
