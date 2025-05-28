@@ -10,7 +10,6 @@ import com.joaquin.uala.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -52,33 +51,7 @@ class CityRepositoryImpl(
         }
     }
 
-    override fun searchCities(query: String, onlyFavorites: Boolean): Flow<Resource<List<CityModel>>> = flow {
-        emit(Resource.Loading)
 
-        try {
-            val remoteCities = remoteDataSource.downloadCities()
-                .map { it.toModel() }
-
-            val favoriteIds = localDataSource.getFavoriteCities()
-                .first()
-                .map { it.id }
-                .toSet()
-
-            val merged = remoteCities.map {
-                it.copy(isFavorite = it.id in favoriteIds)
-            }
-
-            val filtered = merged.filter { it.name.contains(query, ignoreCase = true) }
-
-            emit(
-                Resource.Success(
-                    if (onlyFavorites) filtered.filter { it.isFavorite } else filtered
-                )
-            )
-        } catch (e: Exception) {
-            emit(Resource.Error("Error en la búsqueda", e))
-        }
-    }.flowOn(Dispatchers.IO)
 }
 
 

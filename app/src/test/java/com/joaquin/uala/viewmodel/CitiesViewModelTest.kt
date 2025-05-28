@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.joaquin.uala.domain.model.CityModel
 import com.joaquin.uala.domain.useCases.CityUseCases
 import com.joaquin.uala.presentation.cities.list.CitiesViewModel
+import com.joaquin.uala.utils.NetworkConnectivityObserver
 import com.joaquin.uala.utils.Resource
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -29,13 +30,15 @@ class CitiesViewModelTest {
     private lateinit var viewModel: CitiesViewModel
     private val useCases: CityUseCases = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
+    private val connectivityObserver: NetworkConnectivityObserver = mockk(relaxed = true)
+
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { useCases.getFavoriteCities() } returns flowOf(emptyList())
         every { useCases.getAllCities() } returns flowOf(Resource.Success(emptyList()))
-        viewModel = CitiesViewModel(useCases)
+        viewModel = CitiesViewModel(useCases,connectivityObserver)
     }
 
     @After
@@ -51,7 +54,7 @@ class CitiesViewModelTest {
         )
         every { useCases.getAllCities() } returns flowOf(Resource.Success(list))
 
-        viewModel = CitiesViewModel(useCases)
+        viewModel = CitiesViewModel(useCases,connectivityObserver)
         advanceUntilIdle()
 
         val result = viewModel.citiesState.value
@@ -65,7 +68,7 @@ class CitiesViewModelTest {
         every { useCases.getAllCities() } returns flowOf(Resource.Success(listOf(city)))
         coEvery { useCases.toggleFavorite(any()) } just Runs
 
-        viewModel = CitiesViewModel(useCases)
+        viewModel = CitiesViewModel(useCases,connectivityObserver)
         advanceUntilIdle()
 
         viewModel.toggleFavorite(city)
@@ -77,26 +80,42 @@ class CitiesViewModelTest {
     }
 
     @Test
-    fun `searchCities should return filtered cities`() = runTest {
-        val city1 = CityModel(1, "Buenos Aires", "AR", 0.0, 0.0, true)
-        val city2 = CityModel(2, "Córdoba", "AR", 0.0, 0.0, false)
-        every { useCases.getAllCities() } returns flowOf(Resource.Success(listOf(city1, city2)))
+    fun `searchCities should return cities that match prefix and favorites`() = runTest {
+        val city1 = CityModel(1, "Alabama", "US", 0.0, 0.0, true)
+        val city2 = CityModel(2, "Albuquerque", "US", 0.0, 0.0, true)
+        val city3 = CityModel(3, "Sydney", "AU", 0.0, 0.0, true)
+        val city4 = CityModel(4, "Denver", "US", 0.0, 0.0, false)
 
-        viewModel = CitiesViewModel(useCases)
+        every { useCases.getAllCities() } returns flowOf(Resource.Success(listOf(city1, city2, city3, city4)))
+        every { useCases.getFavoriteCities() } returns flowOf(listOf(city1, city2, city3))
+
+        viewModel = CitiesViewModel(useCases,connectivityObserver)
         advanceUntilIdle()
 
-        viewModel.updateSearchQuery("buenos", onlyFavorites = false)
-        val result = viewModel.searchState.value
-        assertThat(result).isInstanceOf(Resource.Success::class.java)
-        assertThat((result as Resource.Success).data).containsExactly(city1)
+        viewModel.searchCities("Al", onlyFavorites = true)
+        val result1 = viewModel.searchState.value
+        assertThat(result1).isInstanceOf(Resource.Success::class.java)
+        val filtered1 = (result1 as Resource.Success).data
+        assertThat(filtered1).containsExactly(city1, city2)
+
+        viewModel.searchCities("s", onlyFavorites = true)
+        val result2 = viewModel.searchState.value
+        val filtered2 = (result2 as Resource.Success).data
+        assertThat(filtered2).containsExactly(city3)
+
+        viewModel.searchCities("d", onlyFavorites = false)
+        val result3 = viewModel.searchState.value
+        val filtered3 = (result3 as Resource.Success).data
+        assertThat(filtered3).containsExactly(city4)
     }
+
 
     @Test
     fun `updateSearchQuery should trigger search`() = runTest {
         val city = CityModel(1, "Rosario", "AR", 0.0, 0.0, true)
         every { useCases.getAllCities() } returns flowOf(Resource.Success(listOf(city)))
 
-        viewModel = CitiesViewModel(useCases)
+        viewModel = CitiesViewModel(useCases,connectivityObserver)
         advanceUntilIdle()
 
         viewModel.updateSearchQuery("ros", onlyFavorites = true)

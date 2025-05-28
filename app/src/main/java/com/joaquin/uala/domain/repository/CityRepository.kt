@@ -8,5 +8,4 @@ interface CityRepository {
     fun getAllCities(): Flow<Resource<List<CityModel>>>
     fun getFavoriteCities(): Flow<List<CityModel>>
     suspend fun toggleFavorite(city: CityModel)
-    fun searchCities(query: String, onlyFavorites: Boolean = false): Flow<Resource<List<CityModel>>>
 }

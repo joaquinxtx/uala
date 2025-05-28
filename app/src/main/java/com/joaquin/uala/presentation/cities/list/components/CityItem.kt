@@ -1,8 +1,11 @@
 package com.joaquin.uala.presentation.cities.list.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -31,11 +34,20 @@ fun CityItem(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "${city.name}, ${city.country}",
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyLarge
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "${city.name}, ${city.country}",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "(${city.lat}, ${city.lon})",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray.copy(alpha = 0.7f)
+            )
+        }
 
         IconButton(onClick = { onToggleFavorite(city) }) {
             Icon(
@@ -46,3 +58,4 @@ fun CityItem(
         }
     }
 }
+

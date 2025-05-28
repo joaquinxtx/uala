@@ -33,11 +33,6 @@ class FakeCityRepository : CityRepository {
         }
     }
 
-    override fun searchCities(
-        query: String,
-        onlyFavorites: Boolean
-    ): Flow<Resource<List<CityModel>>> {
-        throw UnsupportedOperationException("searchCities() no se usa en este proyecto")
-    }
+
 }
 
