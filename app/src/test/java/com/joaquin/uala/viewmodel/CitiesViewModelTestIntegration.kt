@@ -5,10 +5,11 @@ import com.joaquin.uala.data.FakeCityRepository
 import com.joaquin.uala.domain.useCases.CityUseCases
 import com.joaquin.uala.domain.useCases.GetAllCitiesUseCase
 import com.joaquin.uala.domain.useCases.GetFavoriteCitiesUseCase
-import com.joaquin.uala.domain.useCases.SearchCitiesUseCase
 import com.joaquin.uala.domain.useCases.ToggleFavoriteUseCase
 import com.joaquin.uala.presentation.cities.list.CitiesViewModel
+import com.joaquin.uala.utils.NetworkConnectivityObserver
 import com.joaquin.uala.utils.Resource
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -27,6 +28,8 @@ class CitiesViewModelIntegrationTest {
     private lateinit var fakeRepository: FakeCityRepository
     private lateinit var useCases: CityUseCases
     private lateinit var viewModel: CitiesViewModel
+    private val connectivityObserver: NetworkConnectivityObserver = mockk(relaxed = true)
+
 
     @Before
     fun setUp() {
@@ -37,9 +40,8 @@ class CitiesViewModelIntegrationTest {
             getAllCities = GetAllCitiesUseCase(fakeRepository),
             getFavoriteCities = GetFavoriteCitiesUseCase(fakeRepository),
             toggleFavorite = ToggleFavoriteUseCase(fakeRepository),
-            searchCities = SearchCitiesUseCase(fakeRepository)
         )
-        viewModel = CitiesViewModel(useCases)
+        viewModel = CitiesViewModel(useCases, connectivityObserver)
     }
 
     @After

@@ -38,6 +38,9 @@ class CitiesViewModel @Inject constructor(
     private val _selectedTabIndex = MutableStateFlow(0)
     val selectedTabIndex: StateFlow<Int> = _selectedTabIndex
 
+    private val _isSearchVisible = MutableStateFlow(false)
+    val isSearchVisible: StateFlow<Boolean> = _isSearchVisible
+
     private var allCities: List<CityModel> = emptyList()
     private val visibleCities = mutableListOf<CityModel>()
     private var currentPage = 0
@@ -116,13 +119,22 @@ class CitiesViewModel @Inject constructor(
 
 
     fun searchCities(query: String, onlyFavorites: Boolean) {
-        val filtered = allCities.filter {
-            it.name.contains(query, ignoreCase = true) &&
-                    (!onlyFavorites || it.isFavorite)
-        }.sortedBy { it.name }
+        val lowerQuery = query.lowercase()
+
+        val filtered = allCities
+            .asSequence()
+            .filter { city ->
+                city.name.lowercase().startsWith(lowerQuery)
+            }
+            .filter { city ->
+                !onlyFavorites || city.isFavorite
+            }
+            .sortedWith(compareBy({ it.name.lowercase() }, { it.country.lowercase() }))
+            .toList()
 
         _searchState.value = Resource.Success(filtered)
     }
+
 
     fun updateSearchQuery(query: String, onlyFavorites: Boolean) {
         _searchQuery.value = query
@@ -135,6 +147,10 @@ class CitiesViewModel @Inject constructor(
 
     fun clearSelectedCity() {
         _selectedCity.value = null
+    }
+
+    fun setSearchVisibility(visible: Boolean) {
+        _isSearchVisible.value = visible
     }
 }
 
