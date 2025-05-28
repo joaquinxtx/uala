@@ -6,11 +6,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.joaquin.uala.data.local.entity.CityEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LocationFavDao {
     @Query("SELECT * FROM cities")
-    suspend fun getAllFavorites(): List<CityEntity>
+    fun getFavoriteCities(): Flow<List<CityEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(city: CityEntity)

@@ -6,7 +6,7 @@ import com.joaquin.uala.domain.model.CityModel
 
 fun CityResponse.toModel(): CityModel {
     return CityModel(
-        id = _id,
+        id = id,
         name = name,
         country = country,
         lat = coord.lat,
