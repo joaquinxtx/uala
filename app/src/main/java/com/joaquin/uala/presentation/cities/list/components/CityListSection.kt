@@ -39,7 +39,7 @@ fun CityListSection(
         }
 
         is Resource.Error -> EmptyState(
-            message = resource.message ?: defaultErrorMessage,
+            message =  defaultErrorMessage,
             icon = Icons.Default.Refresh
         )
 

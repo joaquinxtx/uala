@@ -12,7 +12,7 @@ import com.joaquin.uala.ui.theme.UalaTheme
 
 @Composable
 fun MainAppContent() {
-   UalaTheme(){
+   UalaTheme{
         val navController = rememberNavController()
 
         Scaffold(
