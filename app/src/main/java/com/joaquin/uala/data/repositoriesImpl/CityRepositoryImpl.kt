@@ -34,7 +34,7 @@ class CityRepositoryImpl(
 
             emit(Resource.Success(merged))
         } catch (e: Exception) {
-            emit(Resource.Error("Error al cargar las ciudades", e))
+            emit(Resource.Error(e.message, e))
         }
     }.flowOn(Dispatchers.IO)
 
