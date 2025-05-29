@@ -113,3 +113,7 @@ testImplementation(libs.truth)
 // Mapas
 implementation(libs.maps.compose)
 implementation(libs.play.services.maps)
+```
+P.D.: Sé que lo correcto es mantener la API Key fuera del repositorio (por ejemplo, usando variables de entorno o archivos locales ignorados como local.properties).
+Sin embargo, para facilitar la revisión y evitar configuraciones extra por parte del evaluador, decidí dejar la API Key directamente en el código fuente.
+Esto no se recomienda en entornos productivos y fue hecho **únicamente con fines prácticos para esta entrega.
