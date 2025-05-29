@@ -39,6 +39,27 @@ Para manejar eficientemente el listado de 200.000 ciudades:
 
 ---
 
+
+### Uso de ViewModel compartido para el detalle de ciudad
+
+Una decisión técnica clave fue utilizar un `ViewModel` compartido entre pantallas para gestionar el estado de la ciudad seleccionada.
+
+Esto permite:
+
+- **Evitar llamadas innecesarias a la red**: al seleccionar una ciudad desde la lista, se guarda en memoria usando un `StateFlow` (`selectedCity`), permitiendo acceder al detalle sin tener que reconsultar datos.
+- **Mantener una navegación eficiente**: el estado fluye directamente desde el `ViewModel`, evitando pasar grandes datos por navegación.
+- **Mejorar la performance y UX**: se reduce la carga de red, se evita trabajo adicional del repositorio, y se mejora la experiencia del usuario al navegar.
+
+Ejemplo:
+
+```kotlin
+fun selectCity(city: CityModel) {
+    _selectedCity.value = city
+}
+
+val selectedCity by viewModel.selectedCity.collectAsState()
+```
+
 ## ViewModel con paginación y conectividad
 
 El `CitiesViewModel`:
@@ -50,6 +71,7 @@ El `CitiesViewModel`:
   - Búsqueda (`searchCities()`).
   - Favoritos (`toggleFavorite()`).
   - Visibilidad de búsqueda, tabs, y selección de ciudad.
+
 
 ---
 
